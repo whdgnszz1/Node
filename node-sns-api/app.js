@@ -10,7 +10,8 @@ const { sequelize } = require("./models");
 
 dotenv.config(); // process.env
 const authRouter = require("./routes/auth");
-const indexRouter = require('./routes/index')
+const indexRouter = require("./routes/index");
+const v1Router = require("./routes/v1");
 const passportConfig = require("./passport");
 
 const app = express();
@@ -49,7 +50,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRouter);
-app.use('/', indexRouter)
+app.use("/", indexRouter);
+app.use("/v1", v1Router);
 
 // 404 NOT FOUND
 app.use((req, res, next) => {

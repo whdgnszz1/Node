@@ -1,8 +1,9 @@
-const express = require('express')
-const router = express.Router()
-const {renderMain} = require('../controllers/index')
+const express = require("express");
+const router = express.Router();
+const { isLoggedIn } = require("../middlewares");
+const { renderLogin, createDomain } = require("../controllers/index");
 
-router.get('/', renderMain)
+router.get("/", renderLogin);
+router.post("/domain", isLoggedIn, createDomain);
 
-
-module.exports = router
+module.exports = router;

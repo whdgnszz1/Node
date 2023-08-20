@@ -11,6 +11,7 @@ const { sequelize } = require("./models");
 dotenv.config(); // process.env
 const pageRouter = require("./routes/page");
 const authRouter = require("./routes/auth");
+const postRouter = require("./routes/post");
 const passportConfig = require("./passport");
 
 const app = express();
@@ -50,6 +51,7 @@ app.use(passport.session());
 
 app.use("/", pageRouter);
 app.use("/auth", authRouter);
+app.use("/post", postRouter);
 
 // 404 NOT FOUND
 app.use((req, res, next) => {

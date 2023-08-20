@@ -4,13 +4,16 @@ const morgan = require("morgan");
 const path = require("path");
 const session = require("express-session");
 const nunjucks = require("nunjucks");
+const passport = require('passport')
 const dotenv = require("dotenv");
 const {sequelize} = require('./models')
 
 dotenv.config(); // process.env
 const pageRouter = require("./routes/page");
+const passportConfig = require('./passport')
 
 const app = express();
+passportConfig()
 app.set("port", process.env.PORT || 8001);
 app.set("view engine", "html");
 nunjucks.configure("views", {
@@ -40,6 +43,8 @@ app.use(
     },
   })
 );
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use("/", pageRouter);
 

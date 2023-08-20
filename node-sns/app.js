@@ -4,29 +4,31 @@ const morgan = require("morgan");
 const path = require("path");
 const session = require("express-session");
 const nunjucks = require("nunjucks");
-const passport = require('passport')
+const passport = require("passport");
 const dotenv = require("dotenv");
-const {sequelize} = require('./models')
+const { sequelize } = require("./models");
 
 dotenv.config(); // process.env
 const pageRouter = require("./routes/page");
-const passportConfig = require('./passport')
+const authRouter = require("./routes/auth");
+const passportConfig = require("./passport");
 
 const app = express();
-passportConfig()
+passportConfig();
 app.set("port", process.env.PORT || 8001);
 app.set("view engine", "html");
 nunjucks.configure("views", {
   express: app,
   watch: true,
 });
-sequelize.sync()
+sequelize
+  .sync()
   .then(() => {
-    console.log('데이터베이스 연결 성공')
+    console.log("데이터베이스 연결 성공");
   })
   .catch((err) => {
-    console.error(err)
-  })
+    console.error(err);
+  });
 app.use(morgan("dev")); // 배포시엔 'combined'
 app.use(express.static(path.join(__dirname, "public"))); // 퍼블릭폴더를 프론트에서 접근 가능하게 함.
 app.use(express.json());
@@ -43,10 +45,11 @@ app.use(
     },
   })
 );
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/", pageRouter);
+app.use("/auth", authRouter);
 
 // 404 NOT FOUND
 app.use((req, res, next) => {
@@ -55,16 +58,15 @@ app.use((req, res, next) => {
   next(error);
 });
 
-// error처리 미들웨어: 반드시 4개의 매개변수! 
+// error처리 미들웨어: 반드시 4개의 매개변수!
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   // 배포모드일때는 해커들이 error를 보고 서버를 공격할 수 있음
-  res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
-  res.status(err.status || 500)
-  res.render('error')
-})
+  res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
+  res.status(err.status || 500);
+  res.render("error");
+});
 
-
-app.listen(app.get('port'), () => {
-  console.log(app.get('port'), '번 포트에서 실행')
-})
+app.listen(app.get("port"), () => {
+  console.log(app.get("port"), "번 포트에서 실행");
+});

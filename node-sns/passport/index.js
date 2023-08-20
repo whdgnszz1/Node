@@ -19,4 +19,6 @@ module.exports = () => {
   // routes/auth.js에서 passport.authenticate('local')이 실행되면
   // localStrategy 호출
   local();
+  // kakaoStrategy 호출
+  kakao()
 };

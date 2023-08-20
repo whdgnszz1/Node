@@ -12,7 +12,21 @@ module.exports = () => {
   });
 
   passport.deserializeUser((id, done) => {
-    User.findOne({ where: { id } })
+    User.findOne({
+      where: { id },
+      include: [
+        {
+          model: User,
+          attributes: ["id", "nick"],
+          as: "Followers",
+        },
+        {
+          model: User,
+          attributes: ["id", "nick"],
+          as: "Followings",
+        },
+      ],
+    })
       .then((user) => done(null, user)) // req.user
       .catch((err) => done(err));
   });
@@ -20,5 +34,5 @@ module.exports = () => {
   // localStrategy 호출
   local();
   // kakaoStrategy 호출
-  kakao()
+  kakao();
 };

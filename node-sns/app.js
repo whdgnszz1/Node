@@ -5,6 +5,7 @@ const path = require("path");
 const session = require("express-session");
 const nunjucks = require("nunjucks");
 const dotenv = require("dotenv");
+const {sequelize} = require('./models')
 
 dotenv.config(); // process.env
 const pageRouter = require("./routes/page");
@@ -16,7 +17,13 @@ nunjucks.configure("views", {
   express: app,
   watch: true,
 });
-
+sequelize.sync()
+  .then(() => {
+    console.log('데이터베이스 연결 성공')
+  })
+  .catch((err) => {
+    console.error(err)
+  })
 app.use(morgan("dev")); // 배포시엔 'combined'
 app.use(express.static(path.join(__dirname, "public"))); // 퍼블릭폴더를 프론트에서 접근 가능하게 함.
 app.use(express.json());
